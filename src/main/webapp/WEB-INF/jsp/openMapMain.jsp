@@ -7,45 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenMap + OpenData MashUp Project</title>
 <%@ include file="/WEB-INF/include/include-header.jspf" %>
-<style>
-section {
-	height:85vh;
-}
-header{
-	height:10vh;
-}
-#map{
-	height:85vh;
-}
-
-#data_list {
-	height:85vh;
-    overflow-y: auto;
-}
-
-.wrap-loading { /*화면 전체를 어둡게 합니다.*/
-	z-index:3;
-    position: fixed;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-    background: rgba(0,0,0,0.2); /*not in ie */
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000', endColorstr='#20000000');    /* ie */
-}
-
-.wrap-loading div { /*로딩 이미지*/
-    position: fixed;
-    top:50%;
-    left:50%;
-    margin-left: -21px;
-    margin-top: -21px;
-}
-
-.display-none { /*감추기*/
-    display:none;
-}
-</style>
 </head>
 <body>
 
