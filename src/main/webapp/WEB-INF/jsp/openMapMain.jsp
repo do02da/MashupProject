@@ -48,10 +48,7 @@ header{
 </style>
 </head>
 <body>
-	<!-- loading div -->
-	<div class="wrap-loading display-none">
-	    <div><img src="<c:url value='/pic/loadingImg.gif'/>" alt="로딩" /></div>
-	</div>
+
 
 	<!-- header start -->
 	<header class="navbar navbar-default">
@@ -83,8 +80,10 @@ header{
 		</div>
 	</section>
 	
-
-
+	<!-- loading div -->
+	<div class="wrap-loading display-none">
+	    <div><img src="<c:url value='/pic/loadingImg.gif'/>" alt="로딩" /></div>
+	</div>
 	
 	<!-- map -->
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91b19305259c40284745eee37f88b8eb"></script>
