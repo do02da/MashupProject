@@ -48,11 +48,7 @@ header{
 	<!-- contents -->
 	<section class="container-fluid">
 		<div class="col-xs-12 col-sm-8 col-sm-push-4" id="map"></div>
-		<div class="col-xs-6 col-sm-2 col-sm-pull-8">
-			<label>
-				<input type="checkbox" id="check_1">전국무인민원발급정보
-			</label>
-		</div>
+		<div class="col-xs-6 col-sm-2 col-sm-pull-8" id="LayerField"></div>
 		<div class="col-xs-6 col-sm-2 col-sm-pull-8">
 			<div class="list-group" id="data_list">
 			</div>
@@ -85,42 +81,82 @@ header{
 	</script>
 
 	<script type="text/javascript">
-		var html = "";
+		// html onload
+		$(document).ready(function(){
+			fn_getDataList();
+		});
 	
-		// checkBox 클릭 이벤트
-		$("#check_1").change(function(e) {
+		function fn_getDataList() {
+			$.ajax({
+				type: 'POST',
+				url: "<c:url value='/map/getDataList.do'/>",
+				success: function(data){
+					fn_setDataListToLayer(data);
+				},
+				error: function(error){
+					alert("Error : " + error);
+				}
+			});
+		}
+		
+		function fn_setDataListToLayer(data) {
+			var chkBoxHtml = "";
 			
-			fn_removeMarker();
-			$("#data_list").html("");
-			
-			// 체크했을 때
-			if($('#check_1').prop('checked') == true) {
-				$.ajax({
-					type: 'POST',
-					url: "<c:url value='/test/test.do'/>",
-					success: function(data){
-						if(data.length > 0){
-			                for(i=0; i<data.length; i++){
-			                		fn_addMarker(data[i]);
-			                		fn_addList(data[i], i);
-			               	 }
-			                
-			                $("#data_list").html(html);
-			                
-			                for(i=0; i<data.length; i++) {
-			        			$("#listID_" + i).on("click", function(e) {
-			        				fn_moveToMarker($(this));
-			        			});	
-			                }
-						}
-					},
-					error:function(request,status,error){
-					    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					}
-				})
+			for (i=0; i<data.length; i++) {
+				chkBoxHtml += "<label>";
+				chkBoxHtml += "<input type='hidden' id='checkName_" + i + "' value='" + data[i] + "'>";
+				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "'>" + data[i];
+				chkBoxHtml += "</label>";
 			}
 			
-		});
+			$("#LayerField").html(chkBoxHtml);
+			
+			for (i=0; i<data.length; i++) {
+				fn_setChkBoxEvent(i);
+			}
+		}
+		
+		var html = "";
+		
+		function fn_setChkBoxEvent(ChkBoxId) {
+			// checkBox 클릭 이벤트
+			$("#checkID_" + ChkBoxId).change(function(e) {
+				
+				fn_removeMarker();
+				html = "";
+				$("#data_list").html("");
+				
+				// 체크했을 때
+				if($("#checkID_" + ChkBoxId).prop('checked') == true) {
+					var checkName = $("#checkName_"+ChkBoxId).val();
+
+					$.ajax({
+						type: 'POST',
+						data:{name:checkName},
+						url: "<c:url value='/map/getData.do'/>",
+						success: function(data){
+							if(data.length > 0){
+				                for(i=0; i<data.length; i++){
+				                		fn_addMarker(data[i]);
+				                		fn_addList(data[i], i);
+				               	 }
+				                
+				                $("#data_list").html(html);
+				                
+				                for(i=0; i<data.length; i++) {
+				        			$("#listID_" + i).on("click", function(e) {
+				        				fn_moveToMarker($(this));
+				        			});	
+				                }
+							}
+						},
+						error:function(request,status,error){
+						    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+						}
+					}) // ajax end
+				} // if end
+			}); // $("#check_1").change end
+		}
 
 		// 지도에 올려진 마커 삭제
 		function fn_removeMarker() {

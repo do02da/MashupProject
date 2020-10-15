@@ -2,6 +2,10 @@ package com.map.controller;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +18,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.map.common.CommandMap;
+import com.map.service.MainService;
 
 @Controller
 public class MainController {
 	Logger logger = (Logger) LogManager.getLogger(this.getClass());
+	
+	@Resource(name="mainService")
+	private MainService mainService;
 	
 	@RequestMapping(value="/map/openMapMain.do")
 	public ModelAndView openSampleList(CommandMap commandMap) throws Exception {
@@ -26,14 +34,13 @@ public class MainController {
 		return mv;
 	}
 	
-	@RequestMapping(value="/test/test.do")
-	public @ResponseBody List<Object> test() throws Exception {
-		URL resource = new ClassPathResource("/data/전국무인민원발급정보표준데이터.json").getURL();
-
-		ObjectMapper mapper = new ObjectMapper();
-		
-		List<Object> objList = mapper.readValue(resource, new TypeReference<List<Object>>(){});
-		
-		return objList;
+	@RequestMapping(value="/map/getDataList.do")
+	public @ResponseBody List<String> getDataList() throws Exception {
+		return mainService.getDataList();
+    }
+	
+	@RequestMapping(value="/map/getData.do")
+	public @ResponseBody List<Object> getData(HttpServletRequest request) throws Exception {
+		return mainService.getData(request.getParameter("name"));
     }
 }
