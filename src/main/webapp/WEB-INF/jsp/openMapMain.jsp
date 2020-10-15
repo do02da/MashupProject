@@ -20,11 +20,39 @@ header{
 
 #data_list {
 	height:85vh;
-     overflow-y: auto;
+    overflow-y: auto;
+}
+
+.wrap-loading { /*화면 전체를 어둡게 합니다.*/
+	z-index:3;
+    position: fixed;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    background: rgba(0,0,0,0.2); /*not in ie */
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000', endColorstr='#20000000');    /* ie */
+}
+
+.wrap-loading div { /*로딩 이미지*/
+    position: fixed;
+    top:50%;
+    left:50%;
+    margin-left: -21px;
+    margin-top: -21px;
+}
+
+.display-none { /*감추기*/
+    display:none;
 }
 </style>
 </head>
 <body>
+	<!-- loading div -->
+	<div class="wrap-loading display-none">
+	    <div><img src="<c:url value='/pic/loadingImg.gif'/>" alt="로딩" /></div>
+	</div>
+
 	<!-- header start -->
 	<header class="navbar navbar-default">
 		<div class="container-fluid">
@@ -54,6 +82,9 @@ header{
 			</div>
 		</div>
 	</section>
+	
+
+
 	
 	<!-- map -->
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=91b19305259c40284745eee37f88b8eb"></script>
@@ -150,6 +181,15 @@ header{
 				                }
 							}
 						},
+						// 로딩 출처: https://skylhs3.tistory.com/4 [다루이의 생활일기]
+						beforeSend:function(){
+					        // 이미지 보여주기 처리
+					        $('.wrap-loading').removeClass('display-none');
+					    },
+					    complete:function(){
+					        // 이미지 감추기 처리
+					        $('.wrap-loading').addClass('display-none');
+					    },
 						error:function(request,status,error){
 						    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 						}
@@ -180,11 +220,10 @@ header{
 			
 			// 마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
 			// 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-			var iwContent = "<div class='list-group-item'><h4 class='list-group-item-heading'>" + data.설치장소 + "</h4>" +
-							"<p class='list-group-item-text'>설치위치 : " + data.설치위치  + "</p>" +
-							"<p class='list-group-item-text'>" + data.소재지도로명주소 + "</p>" +
-							"<p class='list-group-item-text'>지번 : " + data.소재지지번주소 + "</p>" +
-							"</div>";
+			var iwContent = "";
+			iwContent += "<div class='list-group-item'>";
+			iwContent += fn_addDataDetail(data);
+			iwContent += "</div>";
 
 			// 인포윈도우를 생성합니다
 			var infowindow = new kakao.maps.InfoWindow({
@@ -207,13 +246,38 @@ header{
 		// 목록 생성
 		function fn_addList(data, i) {
 			html += "<a href='#this' class='list-group-item' id='listID_" + i + "'>";
-			html += "<h4 class='list-group-item-heading'>" + data.설치장소 + "</h4>";
-			html += "<p class='list-group-item-text'>" + data.설치위치 + "</p>";
-			html += "<p class='list-group-item-text'>" + data.소재지도로명주소 + "</p>";
-			html += "<p class='list-group-item-text'>지번 : " + data.소재지지번주소 + "</p>";
-			html += "<input type='hidden' id='latitude' name='latitude' value='" + data.위도 + "'>"
-			html += "<input type='hidden' id='longitude' name='longitude' value='" + data.경도 + "'>"
+			html += fn_addDataDetail(data);
 			html += "</a>";
+		}
+	
+		// 인포윈도우와 리스트에 들어갈 정보 생성
+		function fn_addDataDetail(data) {
+			var tmpHtml = "";
+			
+			// 리스트 아이팀 헤더 부분
+			if (data.설치장소  !== undefined) {				
+				tmpHtml += "<h4 class='list-group-item-heading'>" + data.설치장소 + "</h4>";
+			} else if (data.대상시설명 !== undefined) {		// 대상시설명이 있으면 (ex. 어린이보호구역표준데이터)
+				tmpHtml += "<h4 class='list-group-item-heading'>" + data.대상시설명 + "</h4>";
+			} else if (data.촬영방면정보 !== undefined) {	// 촬영방면정보가 있으면 (ex. 전국CCTV표준데이터)
+				tmpHtml += "<h4 class='list-group-item-heading'>" + data.촬영방면정보 + "</h4>";
+			}
+			
+			if (data.설치위치  !== undefined) {
+				tmpHtml += "<p class='list-group-item-text'>설치위치 : " + data.설치위치 + "</p>";
+			}
+			
+			if (data.소재지도로명주소 !== undefined) {		// 소재지도로명주소가 있으면
+				tmpHtml += "<p class='list-group-item-text'>소재지도로명주소 : " + data.소재지도로명주소 + "</p>";
+			}
+			
+			if (data.소재지지번주소 !== undefined) {		// 소재지도로명주소가 있으면
+				tmpHtml += "<p class='list-group-item-text'>지번 : " + data.소재지지번주소 + "</p>";
+			}
+			tmpHtml += "<input type='hidden' id='latitude' name='latitude' value='" + data.위도 + "'>"
+			tmpHtml += "<input type='hidden' id='longitude' name='longitude' value='" + data.경도 + "'>"
+			
+			return tmpHtml;
 		}
 		
 		// 선택한 목록 아이템을 지도의 중심으로 보여줍니다.
