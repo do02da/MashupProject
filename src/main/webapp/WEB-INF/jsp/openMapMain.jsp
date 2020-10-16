@@ -125,15 +125,10 @@
 		}
 		
 		var html = "";
-	
-		
+		var DataListHtml = [];
 		function fn_setChkBoxEvent(ChkBoxId) {
 			// checkBox 클릭 이벤트
 			$("#checkID_" + ChkBoxId).change(function(e) {
-				
-				html = "";
-				
-				
 				// 체크했을 때
 				if($("#checkID_" + ChkBoxId).prop('checked') == true) {
 					var checkName = $("#checkName_"+ChkBoxId).val();
@@ -145,12 +140,17 @@
 						success: function(data){
 							if(data.length > 0){
 								if (isAddMarker[ChkBoxId] == false) {	// if : 마커가 생선된 적 없으면
+									html += "<div id='ListDiv_" + ChkBoxId + "'>";
 					                for(i=0; i<data.length; i++){
 					                		fn_addMarker(data[i], checkName);		// 마커 생성
-					                		fn_addList(data[i], i);
+					                		fn_addList(data[i], ChkBoxId, i);
 					               	}
-					                
+					                html += "</div>";
 					                markers_list[ChkBoxId] = markers;	// 마커 목록
+					                
+					                DataListHtml[ChkBoxId] = html;
+					                
+					                html = "";
 					                markers = [];
 					                isAddMarker[ChkBoxId] = true;
 								} else {								// else : 마커가 생선된 적 있으면
@@ -159,10 +159,10 @@
 									}
 								}
 				                
-				                $("#data_list").html(html);
-				                
+								$("#data_list").append(DataListHtml[ChkBoxId]);
+								
 				                for(i=0; i<data.length; i++) {
-				        			$("#listID_" + i).on("click", function(e) {
+				        			$("#listID_" + ChkBoxId + "_" + i).on("click", function(e) {
 				        				fn_moveToMarker($(this));
 				        			});	
 				                }
@@ -183,7 +183,8 @@
 					}) // ajax end
 				} else {	// check if end, Uncheck start
 					fn_removeMarker(ChkBoxId);
-					$("#data_list").html("");
+					$("#ListDiv_"+ChkBoxId).remove();
+
 				}
 			}); // $("#check_1").change end
 		}
@@ -205,6 +206,7 @@
                 title : data.설치장소, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             });
 	
+			// 마커이미지 리소스가 있으면 추가한다.
 			var image = new Image();
 			image.src = "<c:url value='/MarkerImg/" + DataListName + ".png'/>"
 			
@@ -240,6 +242,7 @@
 			});
 		}
 		
+		// 마커 이미지 등록
 		function fn_setMarkerImage(marker, DataListName) {
 			var imageSrc = "<c:url value='/MarkerImg/" + DataListName + ".png'/>", // 마커이미지의 주소입니다
 		    imageSize = new kakao.maps.Size(30, 33) // 마커이미지의 크기입니다
@@ -250,8 +253,8 @@
 		}
 		
 		// 목록 생성
-		function fn_addList(data, i) {
-			html += "<a href='#this' class='list-group-item' id='listID_" + i + "'>";
+		function fn_addList(data, ChkBoxId, i) {
+			html += "<a href='#this' class='list-group-item' id='listID_" + ChkBoxId + "_" + i + "'>";
 			html += fn_addDataDetail(data);
 			html += "</a>";
 		}
