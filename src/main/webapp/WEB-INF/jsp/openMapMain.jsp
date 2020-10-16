@@ -10,7 +10,6 @@
 </head>
 <body>
 
-
 	<!-- header start -->
 	<header class="navbar navbar-default">
 		<div class="container-fluid">
@@ -68,14 +67,31 @@
 		var zoomControl = new kakao.maps.ZoomControl();
 		map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 		
-		var markers = [];
 	</script>
 
 	<script type="text/javascript">
-		// html onload
+		var isAddMarker = [];	// 마커를 추가했는지 여부	false : 미추가, true : 추가
+		var markers_list = [];	// 각 데이터의 마커 목록이 들어갈 배열
+		var markers = [];		// 각 데이터의 마커가 들어갈 목록
+		
+		// html onload되면 서버에 데이터리스트 이름을 가져와서 체크박스로 뿌려줌
 		$(document).ready(function(){
 			fn_getDataList();
 		});
+		
+		function fn_isImage(DataListName) {
+			$.ajax({
+				type: 'POST',
+				data: {DataListName:DataListName},
+				url: "<c:url value='/map/isImage.do'/>",
+				success: function(data){
+					alert("success : " + data + " data length : " + data.length );
+				},
+				error: function(error){
+					alert("Error : " + error);
+				}
+			});
+		}
 	
 		function fn_getDataList() {
 			$.ajax({
@@ -103,19 +119,20 @@
 			$("#LayerField").html(chkBoxHtml);
 			
 			for (i=0; i<data.length; i++) {
+				isAddMarker.push(false);
 				fn_setChkBoxEvent(i);
 			}
 		}
 		
 		var html = "";
+	
 		
 		function fn_setChkBoxEvent(ChkBoxId) {
 			// checkBox 클릭 이벤트
 			$("#checkID_" + ChkBoxId).change(function(e) {
 				
-				fn_removeMarker();
 				html = "";
-				$("#data_list").html("");
+				
 				
 				// 체크했을 때
 				if($("#checkID_" + ChkBoxId).prop('checked') == true) {
@@ -127,10 +144,20 @@
 						url: "<c:url value='/map/getData.do'/>",
 						success: function(data){
 							if(data.length > 0){
-				                for(i=0; i<data.length; i++){
-				                		fn_addMarker(data[i]);
-				                		fn_addList(data[i], i);
-				               	 }
+								if (isAddMarker[ChkBoxId] == false) {	// if : 마커가 생선된 적 없으면
+					                for(i=0; i<data.length; i++){
+					                		fn_addMarker(data[i], checkName);		// 마커 생성
+					                		fn_addList(data[i], i);
+					               	}
+					                
+					                markers_list[ChkBoxId] = markers;	// 마커 목록
+					                markers = [];
+					                isAddMarker[ChkBoxId] = true;
+								} else {								// else : 마커가 생선된 적 있으면
+									for(i=0; i<markers_list[ChkBoxId].length; i++) {
+										markers_list[ChkBoxId][i].setMap(map);
+									}
+								}
 				                
 				                $("#data_list").html(html);
 				                
@@ -141,7 +168,7 @@
 				                }
 							}
 						},
-						// 로딩 출처: https://skylhs3.tistory.com/4 [다루이의 생활일기]
+						// 로딩 - 출처: https://skylhs3.tistory.com/4 [다루이의 생활일기]
 						beforeSend:function(){
 					        // 이미지 보여주기 처리
 					        $('.wrap-loading').removeClass('display-none');
@@ -154,26 +181,36 @@
 						    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 						}
 					}) // ajax end
-				} // if end
+				} else {	// check if end, Uncheck start
+					fn_removeMarker(ChkBoxId);
+					$("#data_list").html("");
+				}
 			}); // $("#check_1").change end
 		}
 
 		// 지도에 올려진 마커 삭제
-		function fn_removeMarker() {
-			for (i=0; i<markers.length; i++) {
-				markers[i].setMap(null);
+		function fn_removeMarker(ChkBoxId) {
+			for (i=0; i<markers_list[ChkBoxId].length; i++) {
+				markers_list[ChkBoxId][i].setMap(null);
 			}
-			markers = [];
 		}
 		
 		// https://devtalk.kakao.com/t/topic/61302/5 중복 마커 처리 참조!!
 		// 마커 생성하고 지도 위에 표시
-		function fn_addMarker(data){
+		function fn_addMarker(data, DataListName){
+
 			var marker = new kakao.maps.Marker({
                 map: map, // 마커를 표시할 지도
                 position: new kakao.maps.LatLng(data.위도, data.경도), // 마커를 표시할 위치
-                title : data.설치장소 // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                title : data.설치장소, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             });
+	
+			var image = new Image();
+			image.src = "<c:url value='/MarkerImg/" + DataListName + ".png'/>"
+			
+			image.onload = function() {
+				fn_setMarkerImage(marker, DataListName);
+			}
 			
 			marker.setMap(map);
 			markers.push(marker) // 배열에 생선된 마커를 추가합니다
@@ -201,6 +238,15 @@
 				// 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
 				infowindow.close();
 			});
+		}
+		
+		function fn_setMarkerImage(marker, DataListName) {
+			var imageSrc = "<c:url value='/MarkerImg/" + DataListName + ".png'/>", // 마커이미지의 주소입니다
+		    imageSize = new kakao.maps.Size(30, 33) // 마커이미지의 크기입니다
+		      
+			var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+		    
+			marker.setImage(markerImage);
 		}
 		
 		// 목록 생성

@@ -17,7 +17,6 @@
 	
 	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
 
-	
 	<bean
 		class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1"
 		p:viewClass="org.springframework.web.servlet.view.JstlView"
