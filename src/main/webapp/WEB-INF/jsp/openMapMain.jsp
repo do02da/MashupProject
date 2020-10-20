@@ -91,20 +91,6 @@
 		        }
 		    });
 		});
-		
-		function fn_isImage(DataListName) {
-			$.ajax({
-				type: 'POST',
-				data: {DataListName:DataListName},
-				url: "<c:url value='/map/isImage.do'/>",
-				success: function(data){
-					alert("success : " + data + " data length : " + data.length );
-				},
-				error: function(error){
-					alert("Error : " + error);
-				}
-			});
-		}
 	
 		function fn_getDataList() {
 			$.ajax({
