@@ -18,14 +18,14 @@
 				<!-- search start-->
 				<form id="searchForm" name="searchForm">
 					<div class="text-center input-group" id="searchDiv">
-						<input type="text" class="form-control" id="searchWord" name="searchWord">
+						<input type="text" class="form-control" id="search_keyWord" name="search_keyWord">
 						
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" id="search">검색</button>
+							<button class="btn btn-default" type="button" id="search_btn">검색</button>
 						</span>
 					</div>
 				</form>
-				<!-- section end -->
+				<!-- search end -->
 			</div>
 		</div>
 	</header>
@@ -77,6 +77,19 @@
 		// html onload되면 서버에 데이터리스트 이름을 가져와서 체크박스로 뿌려줌
 		$(document).ready(function(){
 			fn_getDataList();
+			
+			$('#search_btn').on('click', function(e) {
+				e.preventDefault();
+				fn_search();
+			});
+			
+			
+			$("#search_keyWord").keypress(function (e) {
+		        if (e.which == 13){
+		        	e.preventDefault();
+		        	fn_search();
+		        }
+		    });
 		});
 		
 		function fn_isImage(DataListName) {
@@ -126,6 +139,7 @@
 		
 		var html = "";
 		var DataListHtml = [];
+		
 		function fn_setChkBoxEvent(ChkBoxId) {
 			// checkBox 클릭 이벤트
 			$("#checkID_" + ChkBoxId).change(function(e) {
@@ -139,6 +153,13 @@
 						url: "<c:url value='/map/getData.do'/>",
 						success: function(data){
 							if(data.length > 0){
+								// 검색 초기화
+								for(i=0; i<SearchMarker.length; i++) {
+									SearchMarker[i].setMap(null);
+								}
+								$("#ListDiv_Search").remove();
+								//
+								
 								if (isAddMarker[ChkBoxId] == false) {	// if : 마커가 생선된 적 없으면
 									html += "<div id='ListDiv_" + ChkBoxId + "'>";
 					                for(i=0; i<data.length; i++){
@@ -244,8 +265,8 @@
 		
 		// 마커 이미지 등록
 		function fn_setMarkerImage(marker, DataListName) {
-			var imageSrc = "<c:url value='/MarkerImg/" + DataListName + ".png'/>", // 마커이미지의 주소입니다
-		    imageSize = new kakao.maps.Size(30, 33) // 마커이미지의 크기입니다
+			var imageSrc = "<c:url value='/MarkerImg/" + DataListName + ".png'/>", 	// 마커이미지의 주소입니다
+		    imageSize = new kakao.maps.Size(30, 33)									// 마커이미지의 크기입니다
 		      
 			var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 		    
@@ -264,12 +285,13 @@
 			var tmpHtml = "";
 			
 			// 리스트 아이팀 헤더 부분
+			tmpHtml += "<h4 class='list-group-item-heading'>";
 			if (data.설치장소  !== undefined) {				
-				tmpHtml += "<h4 class='list-group-item-heading'>" + data.설치장소 + "</h4>";
+				tmpHtml += data.설치장소 + "</h4>";
 			} else if (data.대상시설명 !== undefined) {		// 대상시설명이 있으면 (ex. 어린이보호구역표준데이터)
-				tmpHtml += "<h4 class='list-group-item-heading'>" + data.대상시설명 + "</h4>";
+				tmpHtml += data.대상시설명 + "</h4>";
 			} else if (data.촬영방면정보 !== undefined) {	// 촬영방면정보가 있으면 (ex. 전국CCTV표준데이터)
-				tmpHtml += "<h4 class='list-group-item-heading'>" + data.촬영방면정보 + "</h4>";
+				tmpHtml += data.촬영방면정보 + "</h4>";
 			}
 			
 			if (data.설치위치  !== undefined) {
@@ -300,6 +322,60 @@
 		    // 지도 중심을 부드럽게 이동시킵니다
 		    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
 		    map.panTo(moveLatLon);
+		}
+		
+		var SearchMarker = [];
+		
+		// 검색
+		function fn_search() {
+			var search_keyword = $("#search_keyWord").val();
+			
+			// 검색어가 비어있지않으면
+			if (search_keyword != "") {
+				$.ajax({
+					type: 'POST',
+					data:{search_keyword:search_keyword},
+					url: "<c:url value='/map/search.do'/>",
+					success: function(data){
+						if (data.length > 0) {
+							// 초기화
+							$("#search_keyWord").val("");
+							for(i=0; i<SearchMarker.length; i++) {
+								SearchMarker[i].setMap(null);
+							}
+							$("#ListDiv_Search").remove();
+							//
+							
+							for (i=0; i<data.length; i++) {
+								html += "<div id='ListDiv_Search'>";
+				                for(i=0; i<data.length; i++){
+				                		fn_addMarker(data[i].data, data[i].DataListName);		// 마커 생성
+				                		fn_addList(data[i].data, "Search", i);
+				               	}
+				                html += "</div>";
+				                
+				                SearchMarker = markers;
+				                var SearchDataListHtml = html;
+				                
+				                html = "";
+				                markers = [];
+							}
+			                
+							$("#data_list").append(SearchDataListHtml);
+							
+			                for(i=0; i<data.length; i++) {
+			        			$("#listID_Search_" + i).on("click", function(e) {
+			        				fn_moveToMarker($(this));
+			        			});	
+							}
+						}
+					}
+				});
+			} else {
+				alert("검색어를 입력후 검색해주세요.")
+				return false;
+			}	
+			
 		}
 	</script>
 </body>
