@@ -26,14 +26,14 @@ public class MainServiceImpl implements MainService {
 	public List<String> getDataList() throws Exception {
 		ClassLoader cl = this.getClass().getClassLoader(); 
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
-		Resource[] resources = resolver.getResources("classpath*:/data/*.json") ;
+		Resource[] resources = resolver.getResources("classpath*:/data/*.json") ;	// src/main/resources/data/ 밑에 json 파일들을 가져옴
 
 		List<String> resultList = new ArrayList<String>();
 		for (Resource resource: resources){
-		    resultList.add(resource.getFilename().replace(".json", ""));
+		    resultList.add(resource.getFilename().replace(".json", ""));			// ".json"을 없애고 데이터리스트이름들만 리스트에 추가
 		}
 		
-		// API여서 임의로 추가.
+		// API여서 임의로 추가. (개발중)
 		// resultList.add("전국교통사고다발지역표준데이터");
 		
 		return resultList;
@@ -41,7 +41,7 @@ public class MainServiceImpl implements MainService {
 
 	@Override
 	public List<Object> getData(String Listname) throws Exception {
-		if (Listname.equals("전국교통사고다발지역표준데이터")) {		// 전국교통사고다발지역표준데이터
+		if (Listname.equals("전국교통사고다발지역표준데이터")) {		// 전국교통사고다발지역표준데이터(개발중)
 			String Servicekey = "czFVYd2rvx65d10VQv3jW8gHxTLJKR8VXF6bUR5U%2BAhBiSs%2BuhRiPVFbuiarpOz8%2F3g%2FRybQL2XTcE6hOQUq8Q%3D%3D";
 			 StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552061/frequentzoneLg/getRestFrequentzoneLg"); 			/*URL*/
 		        urlBuilder.append("&" + URLEncoder.encode("ServiceKey","UTF-8") + "=" + URLEncoder.encode(Servicekey, "UTF-8")); 			/*공공데이터포털에서 발급받은 인증키*/
@@ -74,8 +74,8 @@ public class MainServiceImpl implements MainService {
 				String[] StrList = tmpData.toString().split(",");
 
 				for (String tmpStr : StrList) {
-					if (tmpStr.contains("설치장소") || tmpStr.contains("대상시설명") || tmpStr.contains("촬영방면정보"))	{	// 제목찾기
-						if (tmpStr.contains(search_keyword)) {
+					if (tmpStr.contains("설치장소") || tmpStr.contains("대상시설명") || tmpStr.contains("촬영방면정보"))	{		// 제목찾기
+						if (tmpStr.contains(search_keyword)) {															// 검색어가 포함되어있으면
 							Map<String, Object> map = new HashMap<String, Object>();
 							map.put("DataListName", datalist);
 							map.put("data", tmpData);
