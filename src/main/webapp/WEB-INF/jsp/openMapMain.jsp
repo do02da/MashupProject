@@ -13,7 +13,9 @@
 	<!-- header start -->
 	<header class="navbar navbar-default">
 		<div class="container-fluid">
-			<div class="col-xs-4"><img class="img-responsive" src="<c:url value='/pic/logo.png'/>" alt="로고"/></div>
+			<div class="col-xs-4">
+				<a href="<c:url value='/map/openMapMain.do'/>"><img class="img-responsive" src="<c:url value='/pic/logo.png'/>" alt="로고"/></a>
+			</div>
 			<div class="col-xs-8">
 				<!-- search start-->
 				<form id="searchForm" name="searchForm">

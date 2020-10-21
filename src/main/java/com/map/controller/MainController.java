@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.map.common.CommandMap;
 import com.map.service.MainService;
 
 @Controller
@@ -24,7 +23,7 @@ public class MainController {
 	private MainService mainService;
 	
 	@RequestMapping(value="/map/openMapMain.do")
-	public ModelAndView openSampleList(CommandMap commandMap) throws Exception {
+	public ModelAndView openSampleList() throws Exception {
 		ModelAndView mv = new ModelAndView("/openMapMain");
 
 		return mv;
