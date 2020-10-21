@@ -73,6 +73,7 @@
 		var isAddMarker = [];	// 마커를 추가했는지 여부	false : 미추가, true : 추가
 		var markers_list = [];	// 각 데이터의 마커 목록이 들어갈 배열
 		var markers = [];		// 각 데이터의 마커가 들어갈 목록
+		var DataListLength;
 		
 		// html onload되면 서버에 데이터리스트 이름을 가져와서 체크박스로 뿌려줌
 		$(document).ready(function(){
@@ -107,11 +108,12 @@
 		
 		function fn_setDataListToLayer(data) {
 			var chkBoxHtml = "";
+			DataListLength = data.length;
 			
 			for (i=0; i<data.length; i++) {
 				chkBoxHtml += "<label>";
 				chkBoxHtml += "<input type='hidden' id='checkName_" + i + "' value='" + data[i] + "'>";
-				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "'>" + data[i];
+				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "' name='DataListName'>" + data[i];
 				chkBoxHtml += "</label>";
 			}
 			
@@ -139,7 +141,7 @@
 						url: "<c:url value='/map/getData.do'/>",
 						success: function(data){
 							if(data.length > 0){
-								// 검색 초기화
+								// 검색된 마커와 리스트 초기화
 								for(i=0; i<SearchMarker.length; i++) {
 									SearchMarker[i].setMap(null);
 								}
@@ -326,10 +328,21 @@
 						if (data.length > 0) {
 							// 초기화
 							$("#search_keyWord").val("");
-							for(i=0; i<SearchMarker.length; i++) {
+							for(i=0; i<SearchMarker.length; i++) {		// 검색된 마커들 초기화
 								SearchMarker[i].setMap(null);
 							}
-							$("#ListDiv_Search").remove();
+							SearchMarker = [];
+							$("#data_list").children().remove();
+							for(i=0; i<DataListLength; i++) {	// 마커 초기화
+								if ($("#checkID_" + i).prop('checked') == true) {	// 체크되어있으면
+									fn_removeMarker(i);
+								}
+							}
+							
+							 $('input:checkbox[name="DataListName"]').each(function() {
+							            this.checked = false; // 체크 해제 처리
+							 });
+
 							//
 							
 							for (i=0; i<data.length; i++) {
@@ -354,6 +367,8 @@
 			        				fn_moveToMarker($(this));
 			        			});	
 							}
+						} else {	// data.length < 0
+							alert("검색 결과가 없습니다.");
 						}
 					}
 				});
