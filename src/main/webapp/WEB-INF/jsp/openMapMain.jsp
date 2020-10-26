@@ -69,13 +69,16 @@
 		var zoomControl = new kakao.maps.ZoomControl();
 		map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 		
+		// copyright의 위치를 오른쪽 아래로 설정하고, 로고와의 위치를 반전시킨다
+		map.setCopyrightPosition(kakao.maps.CopyrightPosition.BOTTOMRIGHT, true);
+		
 	</script>
 
 	<script type="text/javascript">
 		var isAddMarker = [];	// 마커를 추가했는지 여부	false : 미추가, true : 추가
 		var markers_list = [];	// 각 데이터의 마커 목록이 들어갈 배열
 		var markers = [];		// 각 데이터의 마커가 들어갈 목록
-		var DataListLength;
+		var DataListLength;		// 데이터 리스트 개수
 		
 		// html onload되면 서버에 데이터리스트 이름을 가져와서 체크박스로 뿌려줌
 		$(document).ready(function(){
@@ -88,7 +91,7 @@
 			
 			
 			$("#search_keyWord").keypress(function (e) {
-		        if (e.which == 13){
+		        if (e.which == 13) { // Enter키 눌렸을 때
 		        	e.preventDefault();
 		        	fn_search();
 		        }
@@ -114,8 +117,7 @@
 			
 			for (i=0; i<data.length; i++) {
 				chkBoxHtml += "<label>";
-				chkBoxHtml += "<input type='hidden' id='checkName_" + i + "' value='" + data[i] + "'>";
-				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "' name='DataListName'>" + data[i];
+				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "' name='DataListName' value='" + data[i] + "'>" + data[i];
 				chkBoxHtml += "</label>";
 			}
 			
@@ -133,9 +135,8 @@
 		function fn_setChkBoxEvent(ChkBoxId) {
 			// checkBox 클릭 이벤트
 			$("#checkID_" + ChkBoxId).change(function(e) {
-				// 체크했을 때
-				if($("#checkID_" + ChkBoxId).prop('checked') == true) {
-					var checkName = $("#checkName_"+ChkBoxId).val();
+				if($(this).prop('checked') == true) {
+					var checkName = $(this).val();
 
 					$.ajax({
 						type: 'POST',
@@ -172,11 +173,9 @@
 				                
 								$("#data_list").append(DataListHtml[ChkBoxId]);
 								
-				                for(i=0; i<data.length; i++) {
-				        			$("#listID_" + ChkBoxId + "_" + i).on("click", function(e) {
-				        				fn_moveToMarker($(this));
-				        			});	
-				                }
+								$(".ListData").on("click", function(e) {
+									fn_moveToMarker($(this));
+								});
 							}
 						},
 						// 로딩 - 출처: https://skylhs3.tistory.com/4 [다루이의 생활일기]
@@ -265,7 +264,7 @@
 		
 		// 목록 생성
 		function fn_addList(data, ChkBoxId, i) {
-			html += "<a href='#this' class='list-group-item' id='listID_" + ChkBoxId + "_" + i + "'>";
+			html += "<a href='#this' class='list-group-item ListData'>";
 			html += fn_addDataDetail(data);
 			html += "</a>";
 		}
@@ -274,7 +273,7 @@
 		function fn_addDataDetail(data) {
 			var tmpHtml = "";
 			
-			// 리스트 아이팀 헤더 부분
+			// 리스트 아이템 헤더 부분
 			tmpHtml += "<h4 class='list-group-item-heading'>";
 			if (data.설치장소  !== undefined) {				
 				tmpHtml += data.설치장소 + "</h4>";
@@ -364,11 +363,10 @@
 			                
 							$("#data_list").append(SearchDataListHtml);
 							
-			                for(i=0; i<data.length; i++) {
-			        			$("#listID_Search_" + i).on("click", function(e) {
-			        				fn_moveToMarker($(this));
-			        			});	
-							}
+							$(".ListData").on("click", function(e) {
+								fn_moveToMarker($(this));
+							});
+						
 						} else {	// data.length < 0
 							alert("검색 결과가 없습니다.");
 						}
