@@ -83,7 +83,7 @@
 		// html onload되면 서버에 데이터리스트 이름을 가져와서 체크박스로 뿌려줌
 		$(document).ready(function(){
 			fn_getDataList();
-			
+
 			$('#search_btn').on('click', function(e) {
 				e.preventDefault();
 				fn_search();
@@ -91,7 +91,7 @@
 			
 			
 			$("#search_keyWord").keypress(function (e) {
-		        if (e.which == 13) { // Enter키 눌렸을 때
+		        if (e.which === 13) { // Enter키 눌렸을 때
 		        	e.preventDefault();
 		        	fn_search();
 		        }
@@ -187,8 +187,8 @@
 					        // 이미지 감추기 처리
 					        $('.wrap-loading').addClass('display-none');
 					    },
-						error:function(request,status,error){
-						    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+						error:function(request, status, error){
+						    alert("code:" + request.status+"\n" + "message:" + request.responseText+"\n" + "error:" + error);
 						}
 					}) // ajax end
 				} else {	// check if end, Uncheck start
@@ -196,7 +196,7 @@
 					$("#ListDiv_"+ChkBoxId).remove();
 
 				}
-			}); // $("#check_1").change end
+			}); // $("#checkID_").change end
 		}
 
 		// 지도에 올려진 마커 삭제
