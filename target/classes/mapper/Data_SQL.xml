@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Data">
+
+	<!-- 전국무인민원발급정보표준데이터 -->
+	<insert id="insert_CivilAppeal" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TB_CIVILAPPEAL (
+				Place,
+				Location,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum,
+				DataBaseDate
+			)
+			VALUES (
+				#{PLACE},
+				#{LOCATION},
+				#{ROADNAMEADDR},
+				#{LOTNUMADDR},
+				#{LATITUDE},
+				#{LONGITUDE},
+				#{PHONENUM},
+				#{DATABASEDATE}
+			)
+		]]>
+	</insert>
+	
+	<select id="getData_CivilAppeal" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Place,
+				Location,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum
+			FROM
+				TB_CIVILAPPEAL
+			WHERE
+				RoadNameAddr LIKE '${SiDoName}%${SiGuGunName}%' OR
+				LotNumAddr LIKE '${SiDoName}%${SiGuGunName}%'
+				
+		]]>
+	</select>
+	
+	<!-- 전국무인교통단속카메라표준데이터 -->
+	<insert id="insert_TrafficCamera" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TB_TRAFFICCAMERA (
+				Place,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName,
+				PhoneNum,
+				DataBaseDate
+			)
+			VALUES (
+				#{PLACE},
+				#{ROADNAMEADDR},
+				#{LOTNUMADDR},
+				#{LATITUDE},
+				#{LONGITUDE},
+				#{GOORGNAME},
+				#{PHONENUM},
+				#{DATABASEDATE}
+			)
+		]]>
+	</insert>
+	
+	<select id="getData_TrafficCamera" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Place,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName,
+				PhoneNum
+			FROM
+				TB_TRAFFICCAMERA
+			WHERE
+				RoadNameAddr LIKE '${SiDoName}%${SiGuGunName}%' OR
+				LotNumAddr LIKE '${SiDoName}%${SiGuGunName}%'
+		]]>
+	</select>
+	
+	<!-- 전국어린이보호구역표준데이터 -->
+	<insert id="insert_SchoolZone" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TB_SCHOOLZONE (
+				Facilities,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName
+			)
+			VALUES (
+				#{FACILITIES},
+				#{ROADNAMEADDR},
+				#{LOTNUMADDR},
+				#{LATITUDE},
+				#{LONGITUDE},
+				#{GOORGNAME}
+			)
+		]]>
+	</insert>
+	
+	<select id="getData_SchoolZone" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Facilities,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName
+			FROM
+				TB_SCHOOLZONE
+			WHERE
+				RoadNameAddr LIKE '${SiDoName}%${SiGuGunName}%' OR
+				LotNumAddr LIKE '${SiDoName}%${SiGuGunName}%'
+		]]>
+	</select>
+	
+	<!-- 전국CCTV표준데이터 -->
+	<insert id="insert_CCTV" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO TB_CCTV (
+				Direction,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum,
+				DataBaseDate
+			)
+			VALUES (
+				#{DIRECTION},
+				#{ROADNAMEADDR},
+				#{LOTNUMADDR},
+				#{LATITUDE},
+				#{LONGITUDE},
+				#{PHONENUM},
+				#{DATABASEDATE}
+			)
+		]]>
+	</insert>
+	
+	<select id="getData_CCTV" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Direction,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum
+			FROM
+				TB_CCTV
+			WHERE
+				RoadNameAddr LIKE '${SiDoName}%${SiGuGunName}%' OR
+				LotNumAddr LIKE '${SiDoName}%${SiGuGunName}%'
+		]]>
+	</select>
+	
+	<!-- Search -->
+	<select id="Search_CivilAppeal" parameterType="java.lang.String" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Place,
+				Location,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum
+			FROM
+				TB_CIVILAPPEAL
+			WHERE
+				Place LIKE '%${search_keyword}%'
+		]]>
+	</select>
+	
+	<select id="Search_TrafficCamera" parameterType="java.lang.String" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Place,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName,
+				PhoneNum
+			FROM
+				TB_TRAFFICCAMERA
+			WHERE
+				Place LIKE '%${search_keyword}%'
+		]]>
+	</select>
+	
+	<select id="Search_SchoolZone" parameterType="java.lang.String" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Facilities,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				GoOrgName
+			FROM
+				TB_SCHOOLZONE
+			WHERE
+				Facilities LIKE '%${search_keyword}%'
+		]]>
+	</select>
+	
+	<select id="Search_CCTV" parameterType="java.lang.String" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				Direction,
+				RoadNameAddr,
+				LotNumAddr,
+				lat,
+				lng,
+				PhoneNum
+			FROM
+				TB_CCTV
+			WHERE
+				Direction LIKE '%${search_keyword}%'
+		]]>
+	</select>
+	<!-- Search End -->
+	
+</mapper>

@@ -1,10 +1,8 @@
 package com.map.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,16 +31,4 @@ public class MainController {
 	public @ResponseBody List<String> getDataList() throws Exception {
 		return mainService.getDataList();
     }
-	
-	@RequestMapping(value="/map/getData.do")
-	public @ResponseBody List<Object> getData(HttpServletRequest request) throws Exception {
-		return mainService.getData(request.getParameter("name"));
-    }
-	
-	@RequestMapping(value="/map/search.do")
-	public @ResponseBody List<Map<String, Object>> Search(HttpServletRequest request) throws Exception {
-		String search_keyword = request.getParameter("search_keyword");
-		
-		return mainService.Search(search_keyword);
-	}
 }
