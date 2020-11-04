@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -25,12 +24,7 @@ public class DataServiceImpl implements DataService{
 	
 	@Resource(name="dataDAO")
 	private DataDAO dataDAO;
-	
-	/* 테이블 이름
-	* TB_CIVILAPPEAL	: 전국무인민원발급정보표준데이터
-	* TB_TRAFFICCAMERA	: 전국무인교통단속카메라표준데이터
-	*/
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void DB_init() throws Exception {
@@ -86,7 +80,7 @@ public class DataServiceImpl implements DataService{
 			
 			System.out.println("선택");
 			System.out.println("-1 : 종료, 1 : 전국무인민원발급정보표준데이터, 2 : 전국무인교통단속카메라표준데이터, 3 : 잔국어린이보호구역표준데이터, 4 : 전국CCTV표준데이터");
-			cursor = sc.nextInt();
+			cursor = sc.nextInt(); 
 			
 			switch(cursor){
 			case 1 : // 전국무인민원발급정보표준데이터
@@ -177,18 +171,6 @@ public class DataServiceImpl implements DataService{
 					resultMap.put("DATABASEDATE", data.get("데이터기준일자"));
 					dataDAO.insert_CCTV(resultMap);
 				}
-				break;
-				
-			case 6:
-				resource = new ClassPathResource("/data/전국어린이보호구역표준데이터.json").getURL();
-				
-				// "fields"와 "Records"로 이루어진 맵
-				EarlyMap = mapper.readValue(resource, new TypeReference<Map<String, Object>>(){});
-				
-				// EarlyMap에서 Records만 분리해서 DataRecords에 넣는다.
-				DataRecords = (List<Map<String, Object>>) EarlyMap.get("records");
-				
-				logger.debug(DataRecords.size());
 				break;
 			}
 			

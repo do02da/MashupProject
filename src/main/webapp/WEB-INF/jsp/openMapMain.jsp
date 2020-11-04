@@ -38,6 +38,7 @@
 		<div class="col-xs-6 col-sm-2 col-sm-pull-8" id="LayerField">
 			<select name="SiDo" id="SiDo"></select>
 			<select name="SiGuGun" id="SiGuGun"></select>
+
 		</div>
 		<div class="col-xs-6 col-sm-2 col-sm-pull-8">
 			<div class="list-group" id="data_list">
@@ -121,11 +122,14 @@
 			var chkBoxHtml = "";
 			DataListLength = data.length;
 			
+			chkBoxHtml += "<table class='h-100'>"
 			for (i=0; i<data.length; i++) {
-				chkBoxHtml += "<label>";
+				chkBoxHtml += "<tr><td>";
 				chkBoxHtml += "<input type='checkbox' id='checkID_" + i + "' name='DataListName' value='" + data[i] + "'>" + data[i];
-				chkBoxHtml += "</label>";
+				chkBoxHtml += "</td></tr>";
 			}
+			chkBoxHtml += "<tr class='h-100'><td class='align-bottom text-muted notice'>본 데이터는 공공데이터포털(https://www.data.go.kr)에서 가져온 것으로 맞지않는 데이터가 있을 수 있습니다.</tr></td>"
+			chkBoxHtml += "</table>"
 			
 			$("#LayerField").append(chkBoxHtml);
 			
@@ -375,6 +379,10 @@
 			
 			if (data.LotNumAddr) {		// 소재지도로명주소가 있으면
 				tmpHtml += "<p class='list-group-item-text'>지번 : " + data.LotNumAddr + "</p>";
+			}
+			
+			if (data.PhoneNum) {		// 전화번호가 있으면
+				tmpHtml += "<p class='list-group-item-text'>전화번호 : " + data.PhoneNum + "</p>";
 			}
 			
 			tmpHtml += "<input type='hidden' id='latitude' name='latitude' value='" + data.lat + "'>"
