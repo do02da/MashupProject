@@ -20,6 +20,13 @@ public class MainController {
 	@Resource(name="mainService")
 	private MainService mainService;
 	
+
+	/**
+	 * index.jsp에서 메인화면으로 보내준다.
+	 * @author	김도영
+	 * @return	메인화면
+	 * @throws	Exception
+	 */
 	@RequestMapping(value="/map/openMapMain.do")
 	public ModelAndView openSampleList() throws Exception {
 		ModelAndView mv = new ModelAndView("/openMapMain");
@@ -27,6 +34,12 @@ public class MainController {
 		return mv;
 	}
 	
+	/**
+	 * src/main/resources/data에 있는 json 파일들의 이름을 가져온다
+	 * @author	김도영
+	 * @return	데이터리스트 이름
+	 * @throws	Exception
+	 */
 	@RequestMapping(value="/map/getDataList.do")
 	public @ResponseBody List<String> getDataList() throws Exception {
 		return mainService.getDataList();

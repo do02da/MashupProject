@@ -5,6 +5,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="김도영">
+
 <title>OpenMap + OpenData MashUp Project</title>
 <%@ include file="/WEB-INF/include/include-header.jspf" %>
 </head>
@@ -12,20 +14,22 @@
 
 	<!-- header start -->
 	<header class="navbar navbar-default">
-		<div class="container-fluid">
+		<div class="container-fluid h-100">
 			<div class="col-xs-4">
 				<a href="<c:url value='/map/openMapMain.do'/>"><img class="img-responsive" src="<c:url value='/pic/logo.png'/>" alt="로고"/></a>
 			</div>
-			<div class="col-xs-8">
+			<div class="col-xs-8 h-100">
 				<!-- search start-->
-				<form id="searchForm" name="searchForm">
-					<div class="text-center input-group" id="searchDiv">
-						<input type="text" class="form-control" id="search_keyWord" name="search_keyWord">
-						
-						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" id="search_btn">검색</button>
-						</span>
-					</div>
+				<form class="h-100" id="searchForm" name="searchForm">
+					<table class="text-center input-group h-100" id="searchDiv">
+						<tr>
+							<td><input type="text" class="form-control" id="search_keyWord" name="search_keyWord"></td>
+							
+							<td class="input-group-btn search">
+								<button class="btn btn-default" type="button" id="search_btn">검색</button>
+							</td>
+						</tr>
+					</table>
 				</form>
 				<!-- search end -->
 			</div>	
@@ -140,11 +144,11 @@
 		
 		// 출처 : https://codepen.io/eond/pen/oMBRpG
 		function fn_setSelect() {
-			var area0 = ["시/도 선택","서울특별시","인천광역시","대전광역시","광주광역시","대구광역시","울산광역시","부산광역시","경기도","강원도","충청북도","충청남도","전라북도","전라남도","경상북도","경상남도","제주도"];
+			var area0 = ["시/도 선택","서울특별시","인천광역시","대전광역시","광주광역시","대구광역시","울산광역시","부산광역시","경기도","강원도","충청북도","충청남도","전라북도","전라남도","경상북도","경상남도","제주특별자치도"];
 			var area1 = ["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"];
 			var area2 = ["계양구","남구","남동구","동구","부평구","서구","연수구","중구","강화군","옹진군"];
 			var area3 = ["대덕구","동구","서구","유성구","중구"];
-			var area4 = ["광산구","남구","동구",     "북구","서구"];
+			var area4 = ["광산구","남구","동구", "북구","서구"];
 			var area5 = ["남구","달서구","동구","북구","서구","수성구","중구","달성군"];
 			var area6 = ["남구","동구","북구","중구","울주군"];
 			var area7 = ["강서구","금정구","남구","동구","동래구","부산진구","북구","사상구","사하구","서구","수영구","연제구","영도구","중구","해운대구","기장군"];
@@ -195,18 +199,18 @@
 		function fn_setChkBoxEvent(ChkBoxId) {
 			// checkBox 클릭 이벤트
 			$("#checkID_" + ChkBoxId).change(function(e) {
-				if($(this).prop('checked') == true) {
-					var checkName = $(this).val();
+				var thisChkBox = $(this);					// 눌린 체크박스
+				
+				if(thisChkBox.prop('checked') == true) {
+					var checkName = thisChkBox.val();		// 체크박스 value => 데이터리스트이름
 					
-					var SiDoName = $("select[name^=SiDo]").val(),
-						SiGuGunName = $("select[name^=SiGuGun]").val();
+					var SiDoName = $("select[name^=SiDo]").val(),			// 시/도 select value
+						SiGuGunName = $("select[name^=SiGuGun]").val();		// 시/군/구 select value
 					
-					if (SiGuGunName == "isNotSelect") {
+					if (SiGuGunName == "isNotSelect") {						// 시/군/구를 선택하지 않았으면
 						alert("지역을 선택해주세요");
 						
-						$('input:checkbox[name="DataListName"]').each(function() {
-				            this.checked = false; // 체크 해제 처리
-				 		});
+						thisChkBox.prop('checked', false);	// 체크 해제
 						
 						return false;
 					} else {
@@ -255,8 +259,10 @@
 									});
 								} else {	// Data.length가 0보다 작을 때
 									alert("해당 지역에 데이터가 없습니다.");
+									thisChkBox.prop('checked', false);
 								}
 							},
+							
 							// 로딩 - 출처: https://skylhs3.tistory.com/4 [다루이의 생활일기]
 							beforeSend:function(){
 						        // 이미지 보여주기 처리
@@ -364,27 +370,28 @@
 				tmpHtml += data.Place
 			} else if (data.Facilities) {		// 대상시설명이 있으면 (ex. 어린이보호구역표준데이터)
 				tmpHtml += data.Facilities
-			} else if (data.Direction) {	// 촬영방면정보가 있으면 (ex. 전국CCTV표준데이터)
+			} else if (data.Direction) {		// 촬영방면정보가 있으면 (ex. 전국CCTV표준데이터)
 				tmpHtml += data.Direction
 			}
 			tmpHtml += "</h4>";
 			
-			if (data.Location) {
+			if (data.Location) {				// 설치위치가 있으면
 				tmpHtml += "<p class='list-group-item-text'>설치위치 : " + data.Location + "</p>";
 			}
 			
-			if (data.RoadNameAddr) {		// 소재지도로명주소가 있으면
+			if (data.RoadNameAddr) {			// 소재지도로명주소가 있으면
 				tmpHtml += "<p class='list-group-item-text'>소재지도로명주소 : " + data.RoadNameAddr + "</p>";
 			}
 			
-			if (data.LotNumAddr) {		// 소재지도로명주소가 있으면
+			if (data.LotNumAddr) {				// 소재지도로명주소가 있으면
 				tmpHtml += "<p class='list-group-item-text'>지번 : " + data.LotNumAddr + "</p>";
 			}
 			
-			if (data.PhoneNum) {		// 전화번호가 있으면
+			if (data.PhoneNum) {				// 전화번호가 있으면
 				tmpHtml += "<p class='list-group-item-text'>전화번호 : " + data.PhoneNum + "</p>";
 			}
 			
+			// 목록 아이템을 선택하면 지도의 중심으로 보여주기위한 위도와 경도
 			tmpHtml += "<input type='hidden' id='latitude' name='latitude' value='" + data.lat + "'>"
 			tmpHtml += "<input type='hidden' id='longitude' name='longitude' value='" + data.lng + "'>"
 
@@ -463,23 +470,23 @@
 		}
 		
 		function fn_listMarker_init() {
-			$("#search_keyWord").val("");
+			$("#search_keyWord").val("");							// 검색어 빈 칸으로
 			
-			for(i=0; i<SearchMarker.length; i++) {		// 검색된 마커들 초기화
+			for(i=0; i<SearchMarker.length; i++) {					// 검색된 마커들 초기화
 				SearchMarker[i].setMap(null);
 			}
 			SearchMarker = [];
 			
 			$("#data_list").children().remove();
 			
-			for(i=0; i<DataListLength; i++) {	// 마커 초기화
+			for(i=0; i<DataListLength; i++) {						// 마커 초기화
 				if ($("#checkID_" + i).prop('checked') == true) {	// 체크되어있으면
 					fn_removeMarker(i);
 				}
 			}
 			
 			 $('input:checkbox[name="DataListName"]').each(function() {
-			 	this.checked = false; // 체크 해제 처리
+			 	this.checked = false; 								// 체크 해제 처리
 			 });
 		}
 	</script>

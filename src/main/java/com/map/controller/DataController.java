@@ -22,20 +22,31 @@ public class DataController {
 	@Resource(name="dataService")
 	private DataService dataService;
 	
-
-	@RequestMapping(value="/data/db_init.do")
-	public void db_init() throws Exception {
-		dataService.DB_init();
-	}
-	
+	/**
+	 * 사용자가 선택한 시/도, 시/군/구와 선택한 데이터리스트 이름을 서비스로 넘겨서 데이터를 받아온다.
+	 * @author	김도영
+	 * @param	name 데이터리스트이름
+	 * @param	SiDoName 선택한 시/도 이름
+	 * @param	SiGuGunName 선택한 시/구/군 이름
+	 * @return	시/도, 시/군/구에 있는 선택한 데이터리스트의 데이터
+	 * @throws	Exception
+	 */
 	@RequestMapping(value="/data/getData.do")
 	@ResponseBody
 	public List<Map<String, Object>> getData(@RequestParam String name, @RequestParam String SiDoName, @RequestParam String SiGuGunName) throws Exception {
 		return dataService.getData(name, SiDoName, SiGuGunName);
 	}
 	
+	/**
+	 * 사용자가 입력한 검색어를 받아와서 모든 데이터리스트에서 검색한다.
+	 * @author	김도영
+	 * @param	request request에서 search_keyword 파라미터를 가져온다.
+	 * @return	검색결과
+	 * @throws	Exception
+	 */
 	@RequestMapping(value="/data/search.do")
-	public @ResponseBody List<Map<String, Object>> Search(HttpServletRequest request) throws Exception {
+	@ResponseBody
+	public List<Map<String, Object>> Search(HttpServletRequest request) throws Exception {
 		String search_keyword = request.getParameter("search_keyword");
 		return dataService.Search(search_keyword);
 	}
