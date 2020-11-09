@@ -24,11 +24,11 @@
 		</logger>
 		
 		<!-- Query Loggers -->
-		<logger name="jdbc.sqlonly" level="debug" additivity="false">
+		<logger name="jdbc.sqlonly" level="off" additivity="false">
 			<appender-ref ref="Console" level="debug"/>
 		</logger>
 		
-		<logger name="jdbc.resultsettable" level="debug" additivity="false">
+		<logger name="jdbc.resultsettable" level="off" additivity="false">
 			<appender-ref ref="Console"/>
 		</logger>
 	 

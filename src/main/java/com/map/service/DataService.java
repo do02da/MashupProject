@@ -26,4 +26,13 @@ public interface DataService {
 	 * @throws	Exception
 	 */
 	List<Map<String, Object>> Search(String search_keyword) throws Exception;
+
+	
+	/**
+	 * 
+	 * @author	김도영
+	 * @return	데이터리스트이름들
+	 * @throws	Exception
+	 */
+	String[] returnListName() throws Exception;
 }

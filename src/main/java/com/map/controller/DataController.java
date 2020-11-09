@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.map.service.DataService;
 
@@ -21,6 +22,20 @@ public class DataController {
 	
 	@Resource(name="dataService")
 	private DataService dataService;
+	
+	/**
+	 * index.jsp에서 메인화면으로 보내준다.
+	 * @author	김도영
+	 * @return	메인화면
+	 * @throws	Exception
+	 */
+	@RequestMapping(value="/map/openMapMain.do")
+	public ModelAndView openSampleList() throws Exception {
+		ModelAndView mv = new ModelAndView("/openMapMain");
+
+		return mv;
+	}
+	
 	
 	/**
 	 * 사용자가 선택한 시/도, 시/군/구와 선택한 데이터리스트 이름을 서비스로 넘겨서 데이터를 받아온다.
@@ -37,6 +52,7 @@ public class DataController {
 		return dataService.getData(name, SiDoName, SiGuGunName);
 	}
 	
+	
 	/**
 	 * 사용자가 입력한 검색어를 받아와서 모든 데이터리스트에서 검색한다.
 	 * @author	김도영
@@ -49,5 +65,17 @@ public class DataController {
 	public List<Map<String, Object>> Search(HttpServletRequest request) throws Exception {
 		String search_keyword = request.getParameter("search_keyword");
 		return dataService.Search(search_keyword);
+	}
+	
+	/**
+	 * 
+	 * @author	김도영
+	 * @return	데이터리스트이름들
+	 * @throws	Exception
+	 */
+	@RequestMapping(value="/data/ListName.do")
+	@ResponseBody
+	public String[] retrunListName() throws Exception {
+		return dataService.returnListName();
 	}
 }

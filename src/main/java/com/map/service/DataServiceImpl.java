@@ -18,6 +18,8 @@ public class DataServiceImpl implements DataService{
 	
 	@Resource(name="dataDAO")
 	private DataDAO dataDAO;
+	
+	private final static String[] DATA_LIST_NAME = {"전국무인민원발급정보표준데이터", "전국무인교통단속카메라표준데이터", "전국어린이보호구역표준데이터", "전국CCTV표준데이터"};
 
 	@Override
 	public List<Map<String, Object>> getData(String name, String SiDoName, String SiGuGunName) throws Exception {
@@ -25,13 +27,13 @@ public class DataServiceImpl implements DataService{
 		map.put("SiDoName", SiDoName);
 		map.put("SiGuGunName", SiGuGunName);
 		
-		if (name.equals("전국무인민원발급정보표준데이터")) {
+		if (name.equals(DATA_LIST_NAME[0])) {
 			return dataDAO.getData_CivilAppeal(map);
-		} else if (name.equals("전국무인교통단속카메라표준데이터")) {
+		} else if (name.equals(DATA_LIST_NAME[1])) {
 			return dataDAO.getData_TrafficCamera(map);
-		} else if (name.equals("전국어린이보호구역표준데이터")) {
+		} else if (name.equals(DATA_LIST_NAME[2])) {
 			return dataDAO.getData_SchoolZone(map);
-		} else if (name.equals("전국CCTV표준데이터")) {
+		} else if (name.equals(DATA_LIST_NAME[3])) {
 			return dataDAO.getData_CCTV(map);
 		} else {
 			return null;
@@ -43,5 +45,10 @@ public class DataServiceImpl implements DataService{
 		List<Map<String, Object>> resultList = dataDAO.Search(search_keyword);
 		
 		return resultList;
+	}
+	
+	@Override
+	public String[] returnListName() throws Exception {
+		return DATA_LIST_NAME;
 	}
 }

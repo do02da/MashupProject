@@ -256,6 +256,15 @@
 		    <version>${egovframework.rte.version}</version>
         </dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<!-- Java HTML Parser
+			공공데이터 다운로드에 이용  -->
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.13.1</version>
+		</dependency>
+		
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -269,7 +278,7 @@
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 			<scope>test</scope>
-		</dependency>        
+		</dependency>
 	</dependencies>
     <build>
         <plugins>

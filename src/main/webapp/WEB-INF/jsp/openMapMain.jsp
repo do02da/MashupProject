@@ -112,7 +112,7 @@
 		function fn_getDataList() {
 			$.ajax({
 				type: 'POST',
-				url: "<c:url value='/map/getDataList.do'/>",
+				url: "<c:url value='/data/ListName.do'/>",
 				success: function(data){
 					fn_setDataListToLayer(data);
 				},
